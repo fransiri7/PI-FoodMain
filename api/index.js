@@ -19,10 +19,17 @@
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
+const {loadDietsInDbIfNotExist} = require('./src/controllers/dietControllers.js')
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(() => {
-  server.listen(3001, () => {
-    console.log('%s listening at 3001'); // eslint-disable-line no-console
+conn.sync({ force: true }).then(() => { // siempre q se guarden cambios se borraran de la base de datos, para evitarlo lo ponemos en false o cargamos nuevamente datos en el cb del server.listen
+  server.listen(3001, async () => {
+    try {
+      await loadDietsInDbIfNotExist();
+      console.log('%s listening at 3001'); // eslint-disable-line no-console
+    } catch (error) {
+     console.log(error)  
+    }
+    //es como una funcion de inicializacion, donde cada vez que levantamos nuestro servidor inicializamos con la DB cargada de recetas
   });
 });
