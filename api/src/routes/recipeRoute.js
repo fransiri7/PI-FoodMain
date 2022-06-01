@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const axios = require('axios');
 const {Recipe, Diet} = require('../db.js');
-const { getAllRecipes, getRecipeById } = require('../controllers/recipesControllers.js')
+const { getAllRecipes, getRecipeById, createNewRecipe } = require('../controllers/recipesControllers.js')
 
 const router = Router();
 
@@ -10,6 +10,9 @@ router.get('/', getAllRecipes);
 
 // GET /recipes/{idReceta}:
 router.get('/:id', getRecipeById);
+
+// POST /
+router.post('/', createNewRecipe);
 
 
 

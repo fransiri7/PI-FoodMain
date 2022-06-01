@@ -1,6 +1,6 @@
 const axios = require("axios");
 require("dotenv").config();
-const { ALL_RECIPES } = process.env;
+const { API_KEY, API_URL } = process.env;
 const { Recipe, Diet } = require("../db");
 
 /* GET /types:
@@ -37,7 +37,6 @@ Obtener todos los tipos de dieta posibles
   const getAllDiets = async (req, res) => {
     // const {name} = req.body
     const allDiet = await loadDietsInDbIfNotExist()
-    console.log(allDiet)
     res.json(allDiet)
   };
 

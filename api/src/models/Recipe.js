@@ -16,16 +16,17 @@ module.exports = (sequelize) => {
     },
     name: {
       type: DataTypes.STRING,
+      //unique: true,
       allowNull: false,
     },
     summary:{
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    healthScore:{
+    aggregateLikes:{
       type: DataTypes.INTEGER,
     },
-    likes:{
+    healthScore:{
       type: DataTypes.INTEGER,
     },
     instructions:{
