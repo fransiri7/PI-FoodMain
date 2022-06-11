@@ -13,7 +13,7 @@ const getAllRecipesFromDb = async (name) => {
     return await Recipe.findAll({
       where: {
         name: {
-          [Op.iLike]: name,
+          [Op.iLike]: `%${name}%`,
         },
       },
     });
@@ -33,6 +33,7 @@ const getAllRecipesFromApi = async (name) => {
       instructions: e.instructions,
       likes: e.aggregateLikes,
       diets: e.diets,
+      image:e.image,
     };
   });
   if (name) {
@@ -44,21 +45,27 @@ const getAllRecipesFromApi = async (name) => {
   return recipeAll;
 };
 
-const getAllRecipes = async (req, res) => {
+const getAllRecipes = async (req, res, next) => {
   const { name } = req.query;
-  const apiRecipes = await getAllRecipesFromApi(name);
-  const dbRecipes = await getAllRecipesFromDb(name);
-  const response = apiRecipes.concat(dbRecipes);
-  if (response.length === 0) {
-    res.json({ msg: "No se encontro ninguna receta con ese nombre" });
+  try {
+    const apiRecipes = await getAllRecipesFromApi(name);
+    const dbRecipes = await getAllRecipesFromDb(name);
+    const response = apiRecipes.concat(dbRecipes);
+    if (!response.length) {
+      res.json({ msg: "No se encontro ninguna receta con ese nombre" });
+    } else {
+        res.json(response);
+    }
+    
+  } catch (error) {
+    next (error)
   }
-  res.json(response);
 };
 
 //GET /recipes/{idReceta}:
-const isUUID = (id) => {
-  return id.length > 10;
-};
+// const isUUID = (id) => {
+//   return id.length > 6;
+// };
 
 const getRecipeByIdFromDb = async (id) => {
   const response = await Recipe.findOne({
@@ -76,6 +83,7 @@ const getRecipeByIdFromApi = async (id) => {
   const recipeID = {
     id: response.data.id,
     name: response.data.title,
+    image: response.data.image,
     summary: response.data.summary,
     healthScore: response.data.healthScore,
     instructions: response.data.instructions,
@@ -85,62 +93,33 @@ const getRecipeByIdFromApi = async (id) => {
   return recipeID;
 };
 
-const getRecipeById = async (req, res) => {
+const getRecipeById = async (req, res, next) => {
   const { id } = req.params;
-  if (!id) {
-    res.json({ msg: "El ID no existe" });
-  } else {
-    if (isUUID(id)) {
-      const recipeDb = await getRecipeByIdFromDb(id);
-      res.json(recipeDb);
-    } else {
-      const recipeApi = await getRecipeByIdFromApi(id);
-      res.json(recipeApi);
-    }
+  try {
+    if (!id) {
+     res.json({ msg: "El ID no existe" });
+   } else {
+     // if (isUUID(id)) {
+       if (uuidValidate(id)) {
+       const recipeDb = await getRecipeByIdFromDb(id);
+       res.json(recipeDb);
+     } else {
+       const recipeApi = await getRecipeByIdFromApi(id);
+       res.json(recipeApi);
+     }
+   }
+      } catch (error) {
+    next(error)
   }
 };
 
 // POST /recipe:
 /*Recibe los datos recolectados desde el formulario controlado de la ruta de creación de recetas por body
  Crea una receta en la base de datos
- 
-  1- obtener todos los datos pasados por body
  */
 
-//             const promises = tipos?.map(tipo =>{
-//                 return new Promise (async (resolve, reject) =>{
-//                     let tipoBuscado = await Type.findOne({
-//                         where: {
-//                             nombre: tipo
-//                         }
-//                     })
-//                     resolve (
-//                         newPokemon.addType(tipoBuscado)
-//                     )
-//                     reject(err => next(err))
-//                 })
-//             })       
-//             await Promise.all(promises)
-//             let pokemonRta = await Pokemon.findOne({
-//                 where: {
-//                     id: newPokemon.id
-//                 },
-//                 include: [
-//                     {
-//                         model: Type,  
-//                         attributes: ['id', 'nombre']
-//                     }
-//                 ]         
-//             })               
-//             res.send(pokemonRta)
-//         }
-//     } catch (error){
-//         next(error)
-//     }
-// })
-  
 const createNewRecipe = async (req, res) => {
-  const { name, summary, healthScore, instructions, aggregateLikes, diets } = req.body;
+  const { name, summary, healthScore, instructions, aggregateLikes, diets, image } = req.body;
   try {
     if (!name || !summary) {
       res.json({ msg: "Falta ingresar nombre o resumen de la receta" });
@@ -156,6 +135,7 @@ const createNewRecipe = async (req, res) => {
       const newRecipe = await Recipe.create({
           id: uuidv4(),
           name: name,
+          image: image,
           summary: summary,
           instructions: instructions,
           healthScore: healthScore,
