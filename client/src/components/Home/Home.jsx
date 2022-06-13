@@ -2,6 +2,7 @@ import { React, useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux'
 import { getAllRecipes } from "../../redux/actions";
 import Navbar from "../Navbar/Navbar";
+import FilterAndOrder from "../FilterAndOrder/FilterAndOrder";
 import CardRecipes from "../CardRecipes/CardRecipes";
 import style from './home.module.css'
 
@@ -18,6 +19,7 @@ const Home = () => {
   return (
     <div className={style.container}>
         <Navbar/>
+        <FilterAndOrder/>
         <div className={style.containerCards}>
      {allRecipes?.length ? (
             allRecipes.map((el) => {
