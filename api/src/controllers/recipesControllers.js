@@ -5,24 +5,55 @@ const { API_KEY, API_URL } = process.env;
 const { Recipe, Diet } = require("../db");
 const { v4: uuidv4, validate: uuidValidate } = require("uuid");
 
+const formatDietsArray = (stringArray) => 
+    stringArray.map((item, index) => ({
+            id: index,
+            name: item
+        }
+    ))
+
+    const formatInstructionsArray = (instructionArray) => {
+      const arrInstruction = []
+      for (var i = 0; i < instructionArray?.length; i++){
+        for (var j = 0; j < instructionArray[i].steps?.length; j++){
+          arrInstruction.push({number: instructionArray[i].steps[j].number, step: instructionArray[i].steps[j].step})
+        }
+      }
+      return arrInstruction;
+    }
+
+
+
 //GET /recipes?name="..."
 const getAllRecipesFromDb = async (name) => {
   if (!name) {
-    return await Recipe.findAll();
+    return await Recipe.findAll({
+      include: [
+        {
+          model: Diet,
+        },
+      ],
+    });
   } else {
     return await Recipe.findAll({
       where: {
         name: {
           [Op.iLike]: `%${name}%`,
+          
         },
       },
+      include: [
+        {
+          model: Diet,
+        },
+      ],
     });
   }
 };
 
 const getAllRecipesFromApi = async (name) => {
   const response = await axios.get(
-    `${API_URL}/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true`
+    `${API_URL}/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true&number=100`
   );
   const recipeAll = response.data.results.map((e) => {
     return {
@@ -30,10 +61,10 @@ const getAllRecipesFromApi = async (name) => {
       name: e.title,
       summary: e.summary,
       healthScore: e.healthScore,
-      instructions: e.instructions,
+      instructions: formatInstructionsArray(e.analyzedInstructions),
       likes: e.aggregateLikes,
-      diets: e.diets,
-      image:e.image,
+      diets: formatDietsArray(e.diets),
+      image: e.image,
     };
   });
   if (name) {
@@ -54,24 +85,23 @@ const getAllRecipes = async (req, res, next) => {
     if (!response.length) {
       res.json({ msg: "No se encontro ninguna receta con ese nombre" });
     } else {
-        res.json(response);
+      res.json(response);
     }
-    
   } catch (error) {
-    next (error)
+    next(error);
   }
 };
-
-//GET /recipes/{idReceta}:
-// const isUUID = (id) => {
-//   return id.length > 6;
-// };
 
 const getRecipeByIdFromDb = async (id) => {
   const response = await Recipe.findOne({
     where: {
       id: id,
     },
+    include: [
+      {
+        model: Diet,
+      },
+    ],
   });
   return response;
 };
@@ -86,9 +116,9 @@ const getRecipeByIdFromApi = async (id) => {
     image: response.data.image,
     summary: response.data.summary,
     healthScore: response.data.healthScore,
-    instructions: response.data.instructions,
+    instructions: formatInstructionsArray(response.data.analyzedInstructions),
     likes: response.data.aggregateLikes,
-    diets: response.data.diets,
+    diets: formatDietsArray(response.data.diets),
   };
   return recipeID;
 };
@@ -97,19 +127,18 @@ const getRecipeById = async (req, res, next) => {
   const { id } = req.params;
   try {
     if (!id) {
-     res.json({ msg: "El ID no existe" });
-   } else {
-     // if (isUUID(id)) {
-       if (uuidValidate(id)) {
-       const recipeDb = await getRecipeByIdFromDb(id);
-       res.json(recipeDb);
-     } else {
-       const recipeApi = await getRecipeByIdFromApi(id);
-       res.json(recipeApi);
-     }
-   }
-      } catch (error) {
-    next(error)
+      res.json({ msg: "El ID no existe" });
+    } else {
+      if (uuidValidate(id)) {
+        const recipeDb = await getRecipeByIdFromDb(id);
+        res.json(recipeDb);
+      } else {
+        const recipeApi = await getRecipeByIdFromApi(id);
+        res.json(recipeApi);
+      }
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -118,34 +147,63 @@ const getRecipeById = async (req, res, next) => {
  Crea una receta en la base de datos
  */
 
-const createNewRecipe = async (req, res) => {
-  const { name, summary, healthScore, instructions, aggregateLikes, diets, image } = req.body;
+const createNewRecipe = async (req, res, next) => {
+  const {
+    name,
+    summary,
+    score,
+    instructions,
+    likes,
+    diets,
+    image,
+  } = req.body;
   try {
-    if (!name || !summary) {
-      res.json({ msg: "Falta ingresar nombre o resumen de la receta" });
-    }
-    const nameController = await Recipe.findOne({
-      where:{
+    // if (!name || !summary) {
+    //   res.json({ message: "Missing to enter name or summary of the recipe" });
+    // }
+    const existantRecipe = await Recipe.findOne({
+      where: {
         name: name,
-      }
-    })
-    if (nameController){
-      res.json({ msg: "La receta creada ya existe en la base de datos" });
+      },
+    });
+    if (existantRecipe) {
+      res.json({ message: "The created recipe already exists in the database" });
     } else {
       const newRecipe = await Recipe.create({
-          id: uuidv4(),
-          name: name,
-          image: image,
-          summary: summary,
-          instructions: instructions,
-          healthScore: healthScore,
-          aggregateLikes: aggregateLikes,
-          diets: diets,
+        id: uuidv4(),
+        name: name,
+        image: image,
+        summary: summary,
+        instructions: instructions,
+        healthScore: score,
+        aggregateLikes: likes,
       });
-      res.json(newRecipe)
+      const promises = diets?.map((diet) => {
+        return new Promise(async (resolve, reject) => {
+          let foundDiet = await Diet.findOne({
+            where: {
+              name: diet,
+            },
+          });
+          resolve(newRecipe.addDiet(foundDiet));
+          reject((err) => next(err));
+        });
+      });
+      await Promise.all(promises);
+      let response = await Recipe.findOne({
+        where: {
+          id: newRecipe.id,
+        },
+        include: [
+          {
+            model: Diet,
+          },
+        ],
+      });
+      res.send(response);
     }
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
@@ -154,70 +212,3 @@ module.exports = {
   getRecipeById,
   createNewRecipe,
 };
-
-// const createRecipeFromFormFront = async (id, name, summary, healthScore, instructions, aggregateLikes, diets) => {
-//    const [newRecipe, created] = await Recipe.findOrCreate({
-//       where: {
-//           id: id,
-//           name: name,
-//       },
-//       defaults: {
-//        summary: summary,
-//         healthScore: healthScore,
-//         instructions: instructions,
-//         aggregateLikes: aggregateLikes,
-//         diets: diets,
-//       }
-//   })
-
-//   const newRecipe = await Recipe.create({
-//     id: uuidv4(),
-//     name,
-//     summary,
-//     healthScore,
-//     instructions,
-//     aggregateLikes,
-//     diets
-//   })
-//   // console.log(created)
-//   // console.log(newRecipe.toJSON())
-//   return newRecipe;
-// };
-
-
-// const createNewRecipe = async (req, res) => {
-//   const { name, summary, healthScore, instructions, aggregateLikes, diets } =
-//     req.body;
-//   try {
-//     if (!name || !summary) {
-//       res.json({ msg: "Falta ingresar nombre o resumen de la receta" });
-//     }
-//     const idNew = uuidv4()
-//     const [newRecipe, created] = await Recipe.findOrCreate({
-//       where: {
-//         id: idNew,
-//         name: name,
-//       },
-//       defaults: {
-//         summary: summary,
-//         instructions: instructions,
-//         healthScore: healthScore,
-//         aggregateLikes: aggregateLikes,
-//         diets: diets,
-//       },
-//     });
-//     const idController = await Recipe.findOne({
-//       where: {
-//         id: id,
-//       },
-//     });
-//     if (idController === Recipe.id) {
-//       res.json({ msg: "La receta creada ya existe en la base de datos" });
-//       console.log("cual es tu nombre maldita receta?:  ", name);
-//     } else {
-//       res.json(newRecipe);
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };

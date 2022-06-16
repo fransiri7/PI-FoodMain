@@ -2,31 +2,51 @@
 //Ordenar tanto ascendentemente como descendentemente las recetas por orden alfabético y por puntuación
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTypes } from "../../redux/actions";
+import { filter, getAllTypes, orderRecipe } from "../../redux/actions";
 import { capitalizeLetter } from "../../utils/utils";
+import style from "./filterAndOrder.module.css";
 
+const FilterAndOrder = () => {
+  const typeState = useSelector((state) => state.diets);
+  let dispatch = useDispatch();
+  // const { types} = useSelector((state) => state.filter);
 
-const FilterAndOrder = ({allRecipes}) => {
-const type = useSelector((state) => state.diets)
-console.log ( 'que tengo??:', type)
-let dispatch = useDispatch()
-  const { diets } = useSelector((state) => state.filter);
-
-  useEffect(()=>{
-    if(!type.length){
-      dispatch(getAllTypes())
+  useEffect(() => {
+    if (!typeState.length) {
+      dispatch(getAllTypes());
     }
-  }, [dispatch, type.length])
+  }, [dispatch, typeState.length]);
+
+
+  function onOrderChange(e) {
+    e.preventDefault();
+    dispatch(orderRecipe(e.target.value));
+  }
+
+  function onFilterChange(e) {
+    e.preventDefault();
+    dispatch(filter(e.target.value));
+  }
 
   return (
-    <div>
-      <select value={diets} name='selectDiet' >
-        <option value='All'> Filter by types </option>
-        {diets?.map((diet, index) => {
-          <option key={index} value={diet}>
-            {" "}
-            {capitalizeLetter(diet)}{" "}
-          </option>;
+    <div className={style.container}>
+      <select name="selectOrder" onChange={onOrderChange}>
+        <option value="Order"> Order </option>
+        <option value="A-Z"> Sort from A-Z </option>
+        <option value="Z-A"> Sort from Z-A</option>
+        <option value="score-asc"> Sort by score ascendant</option>
+        <option value="score-des"> Sort by score descendant</option>
+      </select>
+
+      <select name="selectDiet" onChange={onFilterChange}>
+        <option value="All"> Filter by types </option>
+        {typeState?.map((diet, index) => {
+          return (
+            <option key={index} value={diet}>
+              {" "}
+              {capitalizeLetter(diet)}{" "}
+            </option>
+          );
         })}
       </select>
     </div>

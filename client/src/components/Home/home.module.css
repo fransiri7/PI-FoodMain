@@ -1,33 +1,33 @@
 .container {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
-  background-color: gray;
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  border: none;
-  z-index: 2147483647;
-}
-
-.containerCards {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: space-evenly;
-  align-items: center;
   background-image: url("../../img/food.jpg");
   width: 100%;
   height: 100%;
 }
 
+.filter {
+  background-color: grey;
+}
+
+.containerCards {
+  min-height: 100vh;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-left: 7%;
+  margin-right: 7%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+
+}
+
 .span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 20%;
   color: white;
   font-size: 80px;
   font-weight: bold;

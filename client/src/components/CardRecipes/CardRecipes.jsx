@@ -6,10 +6,14 @@ import { capitalizeLetter } from "../../utils/utils";
 const CardRecipes = ({ name, image, healthScore, diets, id }) => {
   return (
     <div className={style.container}>
-      <img className={style.imgContainer} src={image} alt="pic" />
+      <Link to={"/recipe/detail/" + id} >
+     
+      <img className={style.imgContainer} src={image} alt="image not found" />
 
-      <Link to={"/recipe/detail/" + id} className={style.name}>
+        <div className={style.name}>
         {name}
+
+        </div>
       </Link>
 
       <div className={style.diets}>
@@ -17,8 +21,8 @@ const CardRecipes = ({ name, image, healthScore, diets, id }) => {
 
         <p>
           {diets?.length ? (
-            diets.map((diet) => {
-              return <li  key={diet}>{capitalizeLetter(diet)} </li>;
+            diets.map((diet, index) => {
+              return <li  key={index}>{capitalizeLetter(diet)} </li>;
             })
           ) : (
             <span>no diets</span>
@@ -27,7 +31,7 @@ const CardRecipes = ({ name, image, healthScore, diets, id }) => {
         </p>
       </div>
 
-      <h3 className={style.score}>Score N° {healthScore}</h3>
+      <h3 className={style.score}> Healty Score N° {healthScore}</h3>
      
     </div>
   );

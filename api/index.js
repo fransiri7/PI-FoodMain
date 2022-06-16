@@ -22,7 +22,7 @@ const { conn } = require('./src/db.js');
 const {loadDietsInDbIfNotExist} = require('./src/controllers/dietControllers.js')
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(() => { // siempre q se guarden cambios se borraran de la base de datos, para evitarlo lo ponemos en false o cargamos nuevamente datos en el cb del server.listen
+conn.sync({ force: false}).then(() => { // siempre q se guarden cambios se borraran de la base de datos, para evitarlo lo ponemos en false o cargamos nuevamente datos en el cb del server.listen
   server.listen(3001, async () => {
     try {
       await loadDietsInDbIfNotExist();    //es una funcion de inicializacion, donde cada vez que levantamos nuestro servidor inicializamos con la DB cargada de recetas

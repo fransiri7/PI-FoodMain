@@ -4,30 +4,32 @@ import { useDispatch, useSelector } from "react-redux";
 import { searchById } from "../../redux/actions";
 import Navbar from "../Navbar/Navbar";
 import { useParams } from "react-router-dom";
-import style from './recipeDetail.module.css'
+import style from "./recipeDetail.module.css";
+import { capitalizeLetter } from "../../utils/utils";
+import { validate as uuidValidate } from "uuid";
 
 const RecipeDetail = () => {
   const params = useParams();
   let id = params.id;
-  
+
   const recipeDetail = useSelector((state) => state.recipeDetail);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(searchById(id));
-  }, [dispatch]);
-  console.log(recipeDetail);
+  }, [dispatch, id]);
   if (!recipeDetail.id) {
     return <span> Searching recipe </span>;
   }
+  console.log("el detalle de la receta", recipeDetail);
   return (
-    <div>
+    <div className={style.container}>
       <div>
         <Navbar />
       </div>
-      <div>
+      <div className={style.containerDetail}>
         <div className={style.name}>
-          <h1><u>Recipe:</u> <br/> {recipeDetail.name}</h1>
+          <h1> {recipeDetail.name} </h1>
         </div>
         <div className={style.img}>
           <img src={recipeDetail.image} alt="img not found" />
@@ -35,36 +37,64 @@ const RecipeDetail = () => {
         <div className={style.id}>
           <h3>ID: {recipeDetail.id}</h3>
         </div>
+        <div className={style.likeAndScore}>
+          <h2 className={style.aggregateLikes}>
+            {" "}
+            Total likes: {recipeDetail.likes}
+          </h2>
+          <h2 className={style.healthScore}>
+            {" "}
+            Health Score: {recipeDetail.healthScore}
+          </h2>
+        </div>
         <div className={style.diets}>
-          <h3>{recipeDetail.diets.length > 1 ? "Types diets: " : "Tipo: "}</h3>
+          <h2 style={{ textDecorationLine: "underline" }}>
+            {recipeDetail.diets.length > 1 ? "Types diets: " : "Type: "}
+          </h2>
           <ul>
-            {recipeDetail.diets?.map((diet) => {
+            {recipeDetail.diets?.map((diet, index) => {
               return (
-                <li key={diet}>
-                  <p>{diet}</p>{" "}
+                <li key={index.id}>
+                  <h4>{capitalizeLetter(diet.name)}</h4>{" "}
                 </li>
               );
             })}
           </ul>
         </div>
         <div className={style.summary}>
-          <h3>Summary</h3>
+          <h2>Summary</h2>
           <p> {recipeDetail.summary} </p>
         </div>
-        <div className={style.aggregateLikes}>
-          <h3> Aggregate Likes: {recipeDetail.aggregateLikes}</h3>
-        </div>
-        <div className={style.healthScore}>
-          <h3> Health Score: {recipeDetail.healthScore}</h3>
-        </div>
         <div className={style.instructions}>
-          <h3>Instructions: </h3>
-          <p> {recipeDetail.instructions} </p>
+          <h2>Instructions: </h2>
+          {recipeDetail.instructions.length > 1 &&
+          !uuidValidate(recipeDetail.id) ? (
+            recipeDetail?.instructions?.map((step, number) => {
+              return (
+                <div>
+                  <p
+                    key={number.number}
+                    style={{
+                      textDecorationLine: "underline",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {" "}
+                    Number Step {number + 1}:
+                  </p>
+                  <p>{step.step}</p>
+                </div>
+              );
+            })
+          ) : uuidValidate(recipeDetail.id) ? (
+            <h4> {recipeDetail.instructions}</h4>
+          ) : (
+            <h4> This recipe doesn't instructions </h4>
+          )}
         </div>
-      <Link to="/home">
-                <button className={style.button} >Back to home </button>
-                   
-      </Link>
+        <Link to="/home">
+          <button className={style.button}>Back to home </button>
+        </Link>
       </div>
     </div>
   );
