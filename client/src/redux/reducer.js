@@ -36,13 +36,16 @@ export default function reducer(state = initialState, { type, payload }) {
       };
 
     case FILTER_TYPE_DIETS:
-      const filter = [...state.allRecipes];
+      const recipes = [...state.allRecipes];
       const arrDietType = [];
       if (payload !== 'All'){
-        for (var i = 0; i < filter?.length; i++){
-          for (var j = 0; j < filter[i].diets?.length; j++){
-            if (filter[i].diets[j].name === payload){
-              arrDietType.push(filter[i])
+        console.log('este es el payload', payload)
+        for (var i = 0; i < recipes?.length; i++){
+          for (var j = 0; j < recipes[i].diets?.length; j++){
+            console.log('tipo de dietaaaa', recipes[i].diets[j].name)
+            if (recipes[i].diets[j].name === payload){
+              console.log('entre al if otra vez')
+              arrDietType.push(recipes[i])
               }
           }
         }
@@ -51,9 +54,10 @@ export default function reducer(state = initialState, { type, payload }) {
           recipes: arrDietType,
         }
       } 
+      console.log('llege aca sin permiso')
       return {
         ...state,
-        recipes: filter,
+        recipes: recipes,
       }
 
       case ORDER_RECIPES:

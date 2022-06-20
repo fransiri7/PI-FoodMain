@@ -17,6 +17,11 @@
   width: 280px;
 }
 
+.container:hover  {
+  transform: scale(1.1);
+transition: all 500ms;
+}
+
 .imgContainer {
   display: flex;
   flex-direction: column;

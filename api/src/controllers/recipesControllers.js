@@ -155,7 +155,7 @@ const createNewRecipe = async (req, res, next) => {
     instructions,
     likes,
     diets,
-    image,
+    image
   } = req.body;
   try {
     // if (!name || !summary) {
@@ -172,7 +172,7 @@ const createNewRecipe = async (req, res, next) => {
       const newRecipe = await Recipe.create({
         id: uuidv4(),
         name: name,
-        image: image,
+        image:image,
         summary: summary,
         instructions: instructions,
         healthScore: score,

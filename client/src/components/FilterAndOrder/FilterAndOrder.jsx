@@ -2,21 +2,28 @@
 //Ordenar tanto ascendentemente como descendentemente las recetas por orden alfabético y por puntuación
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { filter, getAllTypes, orderRecipe } from "../../redux/actions";
+import {
+  filter,
+  getAllTypes,
+  orderRecipe,
+  getAllRecipes,
+} from "../../redux/actions";
 import { capitalizeLetter } from "../../utils/utils";
 import style from "./filterAndOrder.module.css";
 
 const FilterAndOrder = () => {
   const typeState = useSelector((state) => state.diets);
   let dispatch = useDispatch();
-  // const { types} = useSelector((state) => state.filter);
+
+  function backToHome() {
+    dispatch(getAllRecipes());
+  }
 
   useEffect(() => {
     if (!typeState.length) {
       dispatch(getAllTypes());
     }
   }, [dispatch, typeState.length]);
-
 
   function onOrderChange(e) {
     e.preventDefault();
@@ -43,12 +50,12 @@ const FilterAndOrder = () => {
         {typeState?.map((diet, index) => {
           return (
             <option key={index} value={diet}>
-              {" "}
-              {capitalizeLetter(diet)}{" "}
+              {capitalizeLetter(diet)}
             </option>
           );
         })}
       </select>
+      <button onClick={backToHome} className={style.button}>Reset recipes</button>
     </div>
   );
 };
