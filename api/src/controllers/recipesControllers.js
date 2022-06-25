@@ -62,7 +62,7 @@ const getAllRecipesFromApi = async (name) => {
       summary: e.summary,
       healthScore: e.healthScore,
       instructions: formatInstructionsArray(e.analyzedInstructions),
-      likes: e.aggregateLikes,
+      aggregateLikes: e.aggregateLikes,
       diets: formatDietsArray(e.diets),
       image: e.image,
     };
@@ -83,7 +83,7 @@ const getAllRecipes = async (req, res, next) => {
     const dbRecipes = await getAllRecipesFromDb(name);
     const response = apiRecipes.concat(dbRecipes);
     if (!response.length) {
-      res.json({ msg: "No se encontro ninguna receta con ese nombre" });
+      res.json({ msg: "Recipe not found" });
     } else {
       res.json(response);
     }
@@ -117,7 +117,7 @@ const getRecipeByIdFromApi = async (id) => {
     summary: response.data.summary,
     healthScore: response.data.healthScore,
     instructions: formatInstructionsArray(response.data.analyzedInstructions),
-    likes: response.data.aggregateLikes,
+    aggregateLikes: response.data.aggregateLikes,
     diets: formatDietsArray(response.data.diets),
   };
   return recipeID;
@@ -153,14 +153,11 @@ const createNewRecipe = async (req, res, next) => {
     summary,
     score,
     instructions,
-    likes,
+    aggregateLikes,
     diets,
     image
   } = req.body;
   try {
-    // if (!name || !summary) {
-    //   res.json({ message: "Missing to enter name or summary of the recipe" });
-    // }
     const existantRecipe = await Recipe.findOne({
       where: {
         name: name,
@@ -176,7 +173,7 @@ const createNewRecipe = async (req, res, next) => {
         summary: summary,
         instructions: instructions,
         healthScore: score,
-        aggregateLikes: likes,
+        aggregateLikes: aggregateLikes,
       });
       const promises = diets?.map((diet) => {
         return new Promise(async (resolve, reject) => {

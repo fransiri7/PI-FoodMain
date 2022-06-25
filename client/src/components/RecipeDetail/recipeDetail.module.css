@@ -20,6 +20,7 @@
 
 
 .name {
+
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -27,6 +28,10 @@
     justify-content: center;
     align-items: center;
     color:brown;
+    
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 2 2 2 2px;
   
 }
 

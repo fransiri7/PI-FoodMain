@@ -45,7 +45,7 @@ transition: all 500ms;
 }
 
 .name:hover {
-  color: hsl(30, 100%, 50%, 0.6);
+  color: brown;
 }
 
 .diets {
@@ -55,38 +55,4 @@ transition: all 500ms;
   align-content: center;
   justify-content: center;
   align-items: center;
-  /* justify-content: space-evenly;
-  flex-wrap: nowrap; */
-
 }
-
-/*
-   
-
-.score{
-    display: flex;
-    flex-wrap: nowrap;
-    align-content: stretch;
-    justify-content:center;
-    flex-direction: row;
-}  */
-
-/* .title{
-    display: flex;
-    flex-direction: column;
-    height: 15%;
-}
-
-
-
-
-.img {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    border-radius: 15px;
-    width: 100%;
-    margin-bottom: 5px;
-    
-
-} */

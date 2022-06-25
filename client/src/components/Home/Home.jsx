@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllRecipes } from "../../redux/actions";
+import { getAllRecipes, filter, orderRecipe } from "../../redux/actions";
 import Navbar from "../Navbar/Navbar";
 import FilterAndOrder from "../FilterAndOrder/FilterAndOrder";
 import CardRecipes from "../CardRecipes/CardRecipes";
@@ -8,7 +8,6 @@ import Paginado from "../Paginado/Paginado";
 import style from "./home.module.css";
 
 const Home = () => {
-
   const recipes = useSelector((state) => state.recipes);
   const dispatch = useDispatch();
 
@@ -18,50 +17,49 @@ const Home = () => {
   const firstRecipeIndex = lastRecipeIndex - recipePage;
   const currentRecipes = recipes.slice(firstRecipeIndex, lastRecipeIndex);
 
-  const paginate = (numberPag) =>{
-    setActualPage(numberPag)
-  }
+  const paginate = (numberPag) => {
+    setActualPage(numberPag);
+  };
 
-  function previousPage(){
-    if (actualPage > 1){
-      setActualPage(actualPage - 1)
+  function previousPage() {
+    if (actualPage > 1) {
+      setActualPage(actualPage - 1);
     }
   }
 
-  function nextPage(){
-    const lastPage = Math.ceil(recipes.length/recipePage);
-    if (actualPage < lastPage){
-      setActualPage(actualPage + 1)
+  function nextPage() {
+    const lastPage = Math.ceil(recipes.length / recipePage);
+    if (actualPage < lastPage) {
+      setActualPage(actualPage + 1);
     }
   }
- 
-
-
 
   useEffect(() => {
     if (!recipes.length) {
       dispatch(getAllRecipes());
     }
-    const lastPage = Math.ceil(recipes.length/recipePage);
-    if (actualPage > lastPage){
+    const lastPage = Math.ceil(recipes.length / recipePage);
+    if (actualPage > lastPage) {
       setActualPage(1);
     }
   }, [recipes.length, dispatch, actualPage]);
 
+
+
   return (
     <div className={style.container}>
-        <Navbar />
+      <Navbar />
       <div className={style.filter}>
-        <FilterAndOrder />
+        <FilterAndOrder/>
       </div>
       <div>
         <Paginado
-        recipePage={recipePage}
-        recipes={recipes.length}
-        paginate= {paginate}
-        actualPage={actualPage}
-        previousPage={previousPage}
-        nextPage={nextPage}
+          recipePage={recipePage}
+          recipes={recipes.length}
+          paginate={paginate}
+          actualPage={actualPage}
+          previousPage={previousPage}
+          nextPage={nextPage}
         />
       </div>
       <div className={style.containerCards}>

@@ -1,18 +1,61 @@
 import {
   GET_ALL_RECIPES,
   SEARCH_BY_ID,
-  FILTER_TYPE_DIETS,
+  FILTER,
   GET_ALL_TYPES,
   ORDER_RECIPES,
-  CREATE_RECIPES
+  CREATE_RECIPES,
 } from "./typesActions";
+import { validate as uuidValidate } from "uuid";
 
 const initialState = {
   allRecipes: [],
   recipes: [],
   diets: [],
   recipeDetail: {},
+  filter: {
+    dietTypes: "All",
+    order: "defaultOrder",
+    filterApiDb: "filterAll"
+  },
 };
+
+function orderFilters(array, payload) {
+  const sortedRecipes = [...array];
+  if (payload === "A-Z") {
+    sortedRecipes.sort((a, b) => {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+  if (payload === "Z-A") {
+    sortedRecipes.sort((a, b) => {
+      if (a.name > b.name) {
+        return -1;
+      }
+      if (a.name < b.name) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+  if (payload === "score-asc") {
+    sortedRecipes.sort((a, b) => {
+      return a.healthScore - b.healthScore;
+    });
+  }
+  if (payload === "score-des") {
+    sortedRecipes.sort((a, b) => {
+      return b.healthScore - a.healthScore;
+    });
+  }
+  return sortedRecipes;
+}
 
 export default function reducer(state = initialState, { type, payload }) {
   switch (type) {
@@ -21,6 +64,7 @@ export default function reducer(state = initialState, { type, payload }) {
         ...state,
         recipes: payload,
         allRecipes: payload,
+        filter: { dietTypes: "All", order: "defaultOrder", filterApiDb: "filterAll" },
       };
 
     case SEARCH_BY_ID:
@@ -35,59 +79,64 @@ export default function reducer(state = initialState, { type, payload }) {
         diets: payload,
       };
 
-    case FILTER_TYPE_DIETS:
-      const recipes = [...state.allRecipes];
-      const arrDietType = [];
-      if (payload !== 'All'){
-        console.log('este es el payload', payload)
-        for (var i = 0; i < recipes?.length; i++){
-          for (var j = 0; j < recipes[i].diets?.length; j++){
-            console.log('tipo de dietaaaa', recipes[i].diets[j].name)
-            if (recipes[i].diets[j].name === payload){
-              console.log('entre al if otra vez')
-              arrDietType.push(recipes[i])
-              }
-          }
+    case FILTER:
+      function filterByTypes(recipes, dietTypes) {
+        if (dietTypes === "All") {
+          return recipes;
+        } else {
+          let filterRecipes = recipes.filter((recipe) =>
+            recipe.diets?.find((el) => el.name === dietTypes)
+          );
+          return filterRecipes;
         }
-        return {
-          ...state,
-          recipes: arrDietType,
-        }
-      } 
-      console.log('llege aca sin permiso')
-      return {
-        ...state,
-        recipes: recipes,
       }
 
-      case ORDER_RECIPES:
-        const sortRecipe = [...state.recipes]
-        if(payload === 'A-Z' || payload === 'Z-A'){
-          sortRecipe.sort(function(a,b){
-              if(a.name < b.name){
-                  return payload === 'A-Z' ? -1 : 1;
-              }
-              if (a.name > b.name){
-                  return payload === 'A-Z' ? 1 : -1;
-              }
-              return 0;
-          })
-      } else if (payload === 'score-asc' || payload === 'score-des') {
-        sortRecipe.sort(function(a,b){
-            if(a.healthScore < b.healthScore){
-                return payload === 'score-asc' ? -1 : 1;
-            }
-            if (a.healthScore > b.healthScore){
-                return payload === 'score-asc' ? 1 : -1;
-            }
-            return 0;
-        })
-    }
-    return {
-      ...state,
-      recipes: sortRecipe,
-    }
+      function filterByRecipeApiOrDb (recipes, filterApiDb){
+        if (filterApiDb === "filterAll"){
+            return recipes
+        } else {
+        if (filterApiDb === "filterApi"){
+            let filterApi = recipes.filter(el => !uuidValidate(el.id))
+            return filterApi;
+        } else if (filterApiDb === "filterDb"){
+            let filterDb = recipes.filter(el => uuidValidate(el.id))
+            return filterDb;
+        }
+        }
+      }
 
+      const recipesFilterByTypes = filterByTypes(
+        state.allRecipes,
+        payload.dietTypes
+      );
+
+      const recipesFilterByApiOrDb = filterByRecipeApiOrDb(
+        recipesFilterByTypes,
+        payload.filterApiDb
+      )
+
+      
+      let order = orderFilters(recipesFilterByApiOrDb, state.filter.order,);
+      return {
+        ...state,
+        recipes: order,
+        filter: {
+          ...state.filter,
+          dietTypes: payload.dietTypes,
+          filterApiDb: payload.filterApiDb
+        },
+      };
+ 
+    case ORDER_RECIPES:
+      let orderRecipe = orderFilters(state.recipes, payload);
+      return {
+        ...state,
+        recipes: orderRecipe,
+        filter: {
+          ...state.filter,
+          order: payload,
+        },
+      };
     case CREATE_RECIPES:
       return {
         ...state,

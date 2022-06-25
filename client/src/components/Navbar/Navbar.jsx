@@ -2,8 +2,8 @@ import { React } from "react";
 import { Link } from "react-router-dom";
 import style from './navbar.module.css'
 import SearchBar from "../SearchBar/SearchBar";
-import {useDispatch} from 'react-redux'
-import { getAllRecipes } from "../../redux/actions";
+// import {useDispatch} from 'react-redux'
+// import { getAllRecipes } from "../../redux/actions";
 
 const Navbar = () => {
   

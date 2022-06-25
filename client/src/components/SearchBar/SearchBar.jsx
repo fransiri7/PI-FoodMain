@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getAllRecipes } from "../../redux/actions";
+import { getAllRecipes} from "../../redux/actions";
 import { useDispatch } from "react-redux";
 import style from './searchBar.module.css'
 
@@ -8,13 +8,12 @@ const SearchBar = () => {
   const dispatch = useDispatch();
 
   function onInputChange(e) {
-    e.preventDefault();// hace que no se vuelva a recargar la pagina
+    e.preventDefault();
     setSearch(e.target.value);
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
-    console.log('que tiene el search ', search)
     try {
       if (!search){
         alert ('Insert recipe')
@@ -22,10 +21,9 @@ const SearchBar = () => {
         dispatch(getAllRecipes(search));
         setSearch('')
       }
-
       } catch (error) {
       console.log(error)
-    }
+    }  
   }
   return (
     <div>

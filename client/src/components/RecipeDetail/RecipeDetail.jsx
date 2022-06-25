@@ -21,7 +21,7 @@ const RecipeDetail = () => {
   if (!recipeDetail.id) {
     return <span> Searching recipe </span>;
   }
-  console.log("el detalle de la receta", recipeDetail);
+
   return (
     <div className={style.container}>
       <div>
@@ -40,7 +40,7 @@ const RecipeDetail = () => {
         <div className={style.likeAndScore}>
           <h2 className={style.aggregateLikes}>
             {" "}
-            Total likes: {recipeDetail.likes}
+            Likes: {recipeDetail.aggregateLikes}
           </h2>
           <h2 className={style.healthScore}>
             {" "}

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { capitalizeLetter } from "../../utils/utils";
 import { Link } from "react-router-dom";
 
+
 const RecipeCreate = () => {
   function validate(input) {
     let error = {};
@@ -101,7 +102,7 @@ const RecipeCreate = () => {
         score: "",
         instructions: "",
       });
-      console.log("el body del create", body);
+
     } else {
       alert("Please complete all fields");
     }
@@ -114,7 +115,7 @@ const RecipeCreate = () => {
       let validateError = { ...error };
       delete validateError.diets;
       setError(validateError);
-      console.log("este es el array de tipos", arrayDiets);
+
       if (arrayDiets.length > 5) {
         alert(" You cannot select more than 5 types of diets");
         arrayDiets.pop();
@@ -125,18 +126,17 @@ const RecipeCreate = () => {
     }
     setTypeDiet(arrayDiets);
   }
-
   return (
     <div className={style.container}>
       <Navbar />
       <div className={style.div1}>
         <div className={style.div2}>
-          <header className={style.title}> Create your own recipe!</header>
+          <header className={style.font}> Create your own recipe!</header>
         </div>
-        <div className={style.div3}>
-          <form onSubmit={handleSubmit} className={style.form}>
-            <div className={style.div4}>
-              <label> Name: </label>
+        <form onSubmit={handleSubmit} className={style.div3}>
+          <div className={style.div4}>
+            <div className={style.div5}>
+              <label className={style.font}> Name: </label>
               <input
                 type="text"
                 name="name"
@@ -148,7 +148,7 @@ const RecipeCreate = () => {
                 {error.name || ""}
               </span>
 
-              <label> Image: </label>
+              <label className={style.font}> Image: </label>
               <input
                 type="text"
                 name="image"
@@ -159,7 +159,7 @@ const RecipeCreate = () => {
                 {error.image || ""}
               </span>
 
-              <label> Summary: </label>
+              <label className={style.font}> Summary: </label>
               <input
                 type="text"
                 name="summary"
@@ -170,7 +170,7 @@ const RecipeCreate = () => {
                 {error.summary || ""}
               </span>
 
-              <label> Likes: </label>
+              <label className={style.font}> Likes: </label>
               <input
                 type="number"
                 name="likes"
@@ -181,7 +181,7 @@ const RecipeCreate = () => {
                 {error.likes || ""}
               </span>
 
-              <label> Healty Score: </label>
+              <label className={style.font}> Healthy Score: </label>
               <input
                 type="number"
                 name="score"
@@ -192,7 +192,7 @@ const RecipeCreate = () => {
                 {error.score || ""}
               </span>
 
-              <label> Instructions: </label>
+              <label className={style.font}> Instructions: </label>
               <input
                 type="text"
                 name="instructions"
@@ -203,37 +203,35 @@ const RecipeCreate = () => {
                 {error.instructions || ""}
               </span>
             </div>
-            <div className={style.div5}>
-              <div className={style.div6}>
-                <span> Types Diets </span>
-                <span className={error?.diets && style.spanDanger}>
-                  {error.diets || ""}
-                </span>
-              </div>
+            <div className={style.div6}>
+              <span className={style.font} >Diet Types</span>
+              <span className={error?.diets && style.spanDanger}>
+                {error.diets || ""}
+              </span>
               <div className={style.div7}>
-                <div className={style.tipos}>
-                  {diets?.map((diet, index) => {
-                    return (
-                      <div className={style.checkboxYLabel} key={index}>
-                        <input
-                          type="checkbox"
-                          name={diet}
-                          onChange={onChangeCheckBox}
-                        />
-                        <label>{capitalizeLetter(diet)}</label>
-                      </div>
-                    );
-                  })}
+                <div className={style.div8}>
+                {diets?.map((diet, index) => {
+                  return (
+                    <div className={style.checkboxYLabel} key={index}>
+                      <input
+                        type="checkbox"
+                        name={diet}
+                        onChange={onChangeCheckBox}
+                      />
+                      <label>{capitalizeLetter(diet)}</label>
+                    </div>
+                  );
+                })}
                 </div>
               </div>
-              <div className={style.div8}>
-                <button type="submit" className={style.button}>
-                  Create Recipe
-                </button>
-              </div>
             </div>
-          </form>
-        </div>
+          </div>
+          <div className={style.buttonContainer}>
+            <button type="submit" className={style.button}> 
+              Create Recipe
+            </button>
+          </div>
+        </form>
       </div>
       <Link to="/home">
         <button className={style.button}> Back to Home </button>
@@ -241,5 +239,5 @@ const RecipeCreate = () => {
     </div>
   );
 };
-
+  
 export default RecipeCreate;
