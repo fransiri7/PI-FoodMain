@@ -9,9 +9,10 @@ import { capitalizeLetter } from "../../utils/utils";
 import { validate as uuidValidate } from "uuid";
 
 const RecipeDetail = () => {
+  
   const params = useParams();
   let id = params.id;
-
+ 
   const recipeDetail = useSelector((state) => state.recipeDetail);
   const dispatch = useDispatch();
 
@@ -19,7 +20,7 @@ const RecipeDetail = () => {
     dispatch(searchById(id));
   }, [dispatch, id]);
   if (!recipeDetail.id) {
-    return <span> Searching recipe </span>;
+    return <span className={style.span}> Recipe not found </span>;
   }
 
   return (

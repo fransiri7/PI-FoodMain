@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllRecipes, filter, orderRecipe } from "../../redux/actions";
+import { getAllRecipes } from "../../redux/actions";
 import Navbar from "../Navbar/Navbar";
 import FilterAndOrder from "../FilterAndOrder/FilterAndOrder";
 import CardRecipes from "../CardRecipes/CardRecipes";
@@ -10,6 +10,8 @@ import style from "./home.module.css";
 const Home = () => {
   const recipes = useSelector((state) => state.recipes);
   const dispatch = useDispatch();
+
+  // ----------------------- Paginado -------------------------
 
   const [actualPage, setActualPage] = useState(1);
   const recipePage = 9;
@@ -33,8 +35,10 @@ const Home = () => {
       setActualPage(actualPage + 1);
     }
   }
+  // ------------------------------------------------------------
 
   useEffect(() => {
+   
     if (!recipes.length) {
       dispatch(getAllRecipes());
     }
@@ -44,13 +48,11 @@ const Home = () => {
     }
   }, [recipes.length, dispatch, actualPage]);
 
-
-
   return (
     <div className={style.container}>
       <Navbar />
       <div className={style.filter}>
-        <FilterAndOrder/>
+        <FilterAndOrder />
       </div>
       <div>
         <Paginado

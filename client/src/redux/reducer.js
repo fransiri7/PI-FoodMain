@@ -23,7 +23,7 @@ const initialState = {
 function orderFilters(array, payload) {
   const sortedRecipes = [...array];
   if (payload === "A-Z") {
-    sortedRecipes.sort((a, b) => {
+    sortedRecipes?.sort((a, b) => {
       if (a.name > b.name) {
         return 1;
       }
@@ -34,7 +34,7 @@ function orderFilters(array, payload) {
     });
   }
   if (payload === "Z-A") {
-    sortedRecipes.sort((a, b) => {
+    sortedRecipes?.sort((a, b) => {
       if (a.name > b.name) {
         return -1;
       }
@@ -45,12 +45,12 @@ function orderFilters(array, payload) {
     });
   }
   if (payload === "score-asc") {
-    sortedRecipes.sort((a, b) => {
+    sortedRecipes?.sort((a, b) => {
       return a.healthScore - b.healthScore;
     });
   }
   if (payload === "score-des") {
-    sortedRecipes.sort((a, b) => {
+    sortedRecipes?.sort((a, b) => {
       return b.healthScore - a.healthScore;
     });
   }
@@ -97,11 +97,11 @@ export default function reducer(state = initialState, { type, payload }) {
         } else {
         if (filterApiDb === "filterApi"){
             let filterApi = recipes.filter(el => !uuidValidate(el.id))
-            return filterApi;
+             return filterApi;
         } else if (filterApiDb === "filterDb"){
-            let filterDb = recipes.filter(el => uuidValidate(el.id))
+                  let filterDb = recipes?.filter(el => uuidValidate(el.id))
             return filterDb;
-        }
+          }
         }
       }
 

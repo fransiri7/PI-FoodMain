@@ -102,7 +102,6 @@ const RecipeCreate = () => {
         score: "",
         instructions: "",
       });
-
     } else {
       alert("Please complete all fields");
     }
@@ -125,7 +124,7 @@ const RecipeCreate = () => {
       arrayDiets = typeDiet.filter((el) => e.target.name !== el);
     }
     setTypeDiet(arrayDiets);
-  }
+    }
   return (
     <div className={style.container}>
       <Navbar />

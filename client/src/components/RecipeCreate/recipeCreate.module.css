@@ -10,6 +10,7 @@
 .container {
   background-size: cover;
   background-image: url("../../img/recipeCreate.jpg");
+  height: 1010px;
 }
 
 .form {
