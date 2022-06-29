@@ -25,6 +25,7 @@ const SearchBar = () => {
       console.log(error)
     }  
   }
+  
   return (
     <div>
       <form onSubmit={onSubmit}>

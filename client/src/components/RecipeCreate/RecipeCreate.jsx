@@ -6,10 +6,11 @@ import style from "./recipeCreate.module.css";
 import { createRecipe, getAllTypes } from "../../redux/actions";
 import { useState } from "react";
 import { capitalizeLetter } from "../../utils/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const RecipeCreate = () => {
+  
   function validate(input) {
     let error = {};
     if (!input.name) {
@@ -44,8 +45,10 @@ const RecipeCreate = () => {
     }
     return error;
   }
+  
   const diets = useSelector((state) => state.diets);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!diets.length) {
@@ -102,7 +105,8 @@ const RecipeCreate = () => {
         score: "",
         instructions: "",
       });
-    } else {
+      navigate("/home");
+      } else {
       alert("Please complete all fields");
     }
   }
@@ -125,6 +129,7 @@ const RecipeCreate = () => {
     }
     setTypeDiet(arrayDiets);
     }
+
   return (
     <div className={style.container}>
       <Navbar />

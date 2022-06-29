@@ -9,9 +9,9 @@ const { Recipe, Diet } = require("../db");
 
 /* GET /types:
 Obtener todos los tipos de dieta posibles
- En una primera instancia, cuando no exista ninguno, deberán precargar la base de datos con los tipos de datos indicados por spoonacular:
- 
- */
+ En una primera instancia, cuando no exista ninguno, deberán precargar la base de datos con los tipos de datos indicados 
+ por spoonacular:
+  */
 const loadDietsInDbIfNotExist = async () => {
   const dietsFromApi = [
     "vegetarian",
@@ -39,9 +39,9 @@ const loadDietsInDbIfNotExist = async () => {
 };
 
 const getAllDiets = async (req, res) => {
-  //  const {name} = req.body
-  const allDiet = await loadDietsInDbIfNotExist();
+  const allDiet = await loadDietsInDbIfNotExist(); // await Diet.findAll()
   res.json(allDiet);
+
 };
 
 module.exports = {

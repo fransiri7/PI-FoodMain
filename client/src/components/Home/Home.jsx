@@ -9,6 +9,7 @@ import style from "./home.module.css";
 
 const Home = () => {
   const recipes = useSelector((state) => state.recipes);
+  const allRecipes = useSelector((state) => state.allRecipes);
   const dispatch = useDispatch();
 
   // ----------------------- Paginado -------------------------
@@ -38,8 +39,7 @@ const Home = () => {
   // ------------------------------------------------------------
 
   useEffect(() => {
-   
-    if (!recipes.length) {
+    if (!allRecipes.length) {
       dispatch(getAllRecipes());
     }
     const lastPage = Math.ceil(recipes.length / recipePage);
@@ -79,7 +79,7 @@ const Home = () => {
             );
           })
         ) : (
-          <span className={style.span}> Waiting for recipes ... </span>
+          <span className={style.span}> No recipes found ... </span>
         )}
       </div>
     </div>

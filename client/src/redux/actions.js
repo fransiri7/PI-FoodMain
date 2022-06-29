@@ -10,18 +10,17 @@ import {
 
 export const getAllRecipes = (name) => {
   return function (dispatch) {
-      axios.get(`http://localhost:3001/recipes/?name=${name ? name : ""}`)
+    axios
+      .get(`http://localhost:3001/recipes/?name=${name ? name : ""}`)
       .then((recipes) => {
-        if (recipes.data.msg){
-            alert (recipes.data.msg)
+        if (recipes.data.msg) {
+          alert(recipes.data.msg);
         } else {
-            dispatch({
-              type: GET_ALL_RECIPES,
-              payload: recipes.data,
-            });
-
+          dispatch({
+            type: GET_ALL_RECIPES,
+            payload: recipes.data,
+          });
         }
-        
       })
 
       .catch((error) => {
