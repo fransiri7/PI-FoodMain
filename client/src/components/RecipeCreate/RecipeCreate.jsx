@@ -21,10 +21,10 @@ const RecipeCreate = () => {
     if (!input.summary) {
       error.summary = "Summary is required";
     }
-    if (!input.likes) {
-      error.likes = "Likes is required";
-    } else if (input.likes < 0 || input.likes > 15000) {
-      error.likes =
+    if (!input.aggregateLikes) {
+      error.aggregateLikes = "Likes is required";
+    } else if (input.aggregateLikes < 0 || input.aggregateLikes > 15000) {
+      error.aggregateLikes =
         "Should contain a number greater than zero and less than 15.000";
     }
     if (!input.score) {
@@ -60,7 +60,7 @@ const RecipeCreate = () => {
     name: "",
     image: "",
     summary: "",
-    likes: "",
+    aggregateLikes: "",
     score: "",
     instructions: "",
   });
@@ -69,7 +69,7 @@ const RecipeCreate = () => {
     name: "",
     image: "",
     summary: "",
-    likes: "",
+    aggregateLikes: "",
     score: "",
     instructions: "",
   });
@@ -101,7 +101,7 @@ const RecipeCreate = () => {
         name: "",
         image: "",
         summary: "",
-        likes: "",
+        aggregateLikes: "",
         score: "",
         instructions: "",
       });
@@ -177,12 +177,12 @@ const RecipeCreate = () => {
               <label className={style.font}> Likes: </label>
               <input
                 type="number"
-                name="likes"
-                value={input.likes}
+                name="aggregateLikes"
+                value={input.aggregateLikes}
                 onChange={handleChange}
               />
-              <span className={error?.likes && style.spanDanger}>
-                {error.likes || ""}
+              <span className={error?.aggregateLikes && style.spanDanger}>
+                {error.aggregateLikes || ""}
               </span>
 
               <label className={style.font}> Healthy Score: </label>

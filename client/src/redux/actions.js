@@ -6,6 +6,7 @@ import {
   GET_ALL_TYPES,
   ORDER_RECIPES,
   CREATE_RECIPES,
+  CLEAR_RECIPE_DETAIL
 } from "./typesActions";
 
 export const getAllRecipes = (name) => {
@@ -28,6 +29,12 @@ export const getAllRecipes = (name) => {
       });
   };
 };
+
+export const clear = () => {
+  return {
+    type: CLEAR_RECIPE_DETAIL,
+  }
+}
 
 export const searchById = (id) => {
   return async function (dispatch) {

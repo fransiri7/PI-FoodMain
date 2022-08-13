@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllRecipes } from "../../redux/actions";
+import { getAllRecipes, clear } from "../../redux/actions";
 import Navbar from "../Navbar/Navbar";
 import FilterAndOrder from "../FilterAndOrder/FilterAndOrder";
 import CardRecipes from "../CardRecipes/CardRecipes";
@@ -38,7 +38,10 @@ const Home = () => {
   }
   // ------------------------------------------------------------
 
+  
+ 
   useEffect(() => {
+    dispatch(clear());
     if (!allRecipes.length) {
       dispatch(getAllRecipes());
     }
